@@ -36,9 +36,7 @@ export const saveGPTResponseInDb = async (messageGpt, threadId) => {
 		// Save the updated lead
 		await lead.save();
 
-		console.log(
-			`Updated Leads DB with GPT Message: "${messageGpt}..."`
-		);
+		//console.log(`Updated Leads DB with GPT Message: "${messageGpt}..."`);
 
 		return;
 	} catch (error) {

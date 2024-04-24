@@ -4,7 +4,6 @@ import Leads from "../models/Leads.js";
 import axios from "axios";
 import { saveUserMessageInDb } from "./saveUserMessageInDb.js";
 import { saveGPTResponseInDb } from "./saveGPTResponseInDb.js";
-//import { matchkeyWords } from "./matchKeyWords.js";
 
 dotenv.config();
 
