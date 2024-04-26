@@ -20,47 +20,10 @@ export const saveUserMessageInDb = async (newMessage, threadId) => {
 
 	// Save the sent message to the database
 	try {
-		//IMPORTANTE!! ACA TENGO Q MODIFICAR PARA QUE BUSQUE X ID Y NO POR THREADID!!!!!!!!!!!
-		// Find the lead by threadId
-		let lead = await Leads.findOne({ thread_id: threadId });
 		
-		// If the lead does not exist for that thread, create it and return
-		if (lead === null) {
-			// Obtain current date and hour
-			const currentDateTime = new Date().toLocaleString("es-AR", {
-				timeZone: "America/Argentina/Buenos_Aires",
-				day: "2-digit",
-				month: "2-digit",
-				year: "numeric",
-				hour: "2-digit",
-				minute: "2-digit",
-				second: "2-digit",
-			});
-
-			// Look initial conversations and concatenate them
-			let allContent = "";
-			if (newMessage.length > 1) {
-				newMessage.forEach((message) => {
-					if(message.role==="assistant"){
-						allContent = `${allContent} ${currentDateTime} - MegaBot: ${message.content}\n`; 
-					} else {
-						allContent = `${allContent} ${currentDateTime} - Web User: ${message.content}`; 
-					}					
-				});
-			}
-			
-			// Create the lead in database
-			lead = await Leads.create({
-				name: name,
-				id_user: idUser,
-				channel: channel,
-				content: allContent,
-				thread_id: threadId,
-				botSwitch: "ON",
-			});
-
-			return;
-		}
+		// Find the lead by Id
+		let lead = await Leads.findOne({ id_user: idUser });
+				
 		// Obtain current date and hour
 		const currentDateTime = new Date().toLocaleString("es-AR", {
 			timeZone: "America/Argentina/Buenos_Aires",

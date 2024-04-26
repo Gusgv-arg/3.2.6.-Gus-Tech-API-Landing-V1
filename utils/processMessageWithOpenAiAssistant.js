@@ -33,8 +33,12 @@ export const processMessageWithOpenAiAssistant = async (newMessage) => {
 	const channel = newMessage[newMessage.length - 1]?.channel
 		? newMessage[newMessage.length - 1].channel
 		: newMessage.channel;
+	
+	const role = newMessage[newMessage.length - 1]?.role
+		? newMessage[newMessage.length - 1].role
+		: newMessage.role;
 
-	console.log("newMessage en processMessage...:", newMessage);
+	//console.log("newMessage en processMessage...:", newMessage);
 	//console.log("name------>", name)
 
 	// Check if there is an existing thread for the user
@@ -43,8 +47,8 @@ export const processMessageWithOpenAiAssistant = async (newMessage) => {
 	try {
 		existingThread = await Leads.findOne({
 			id_user: idUser, //Last record of messages
-			thread_id: { $exists: true },
-		});
+			thread_id: { $exists: true, $ne: "" },
+		});		
 	} catch (error) {
 		console.error("Error fetching thread from the database:", error.message);
 		throw error;
@@ -73,8 +77,7 @@ export const processMessageWithOpenAiAssistant = async (newMessage) => {
 			});
 		});
 	}
-	// Save the received message from USER to the database (could be array of the first message or object)
-	const role = "user";
+	// Save the received message from USER to the database
 	await saveUserMessageInDb(newMessage, threadId);
 
 	// Run the assistant and wait for completion
@@ -155,7 +158,7 @@ export const processMessageWithOpenAiAssistant = async (newMessage) => {
 		let messageGpt = lastMessageForRun.content[0].text.value;
 
 		//Save the received message from the ASSISTANT to the database
-		await saveGPTResponseInDb(messageGpt, threadId);
+		await saveGPTResponseInDb(idUser, messageGpt, threadId);
 		
 		return { messageGpt, threadId };
 	}

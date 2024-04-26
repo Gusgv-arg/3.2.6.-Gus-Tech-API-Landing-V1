@@ -6,20 +6,20 @@ import { saveUserQuestionInDb } from "../utils/saveUserQuestionInDb.js";
 export const megaBotController = async (req, res) => {
 	//Expected object from the user
 	const newMessage = req.body.messages
-	console.log("newmessages---->", newMessage)
+	//console.log("newmessages en megabotcontroller---->", newMessage)
 	
 	try {
 		// If user asks predefined question
 		if (newMessage.question){
 			const id_user = newMessage.id_user
-			//Save user question in DB
+			//Save user predefined question && answer in DB
 			saveUserQuestionInDb(id_user, newMessage)
 
 			//Process the user question
 			const response = (processQuestionWithApi(newMessage))
 			res.status(200).send({ role: "assistant", content: response.answerQuestion});
 				
-			// Pass the user question to the GPT
+		// Pass the user non predefinded question to the GPT
 		} else {
 			const response = await (processMessageWithOpenAiAssistant(newMessage))	       
 			res.status(200).send({ role: "assistant", content: response.messageGpt, threadId: response.threadId });

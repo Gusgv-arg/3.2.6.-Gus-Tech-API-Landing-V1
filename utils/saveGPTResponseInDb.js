@@ -1,14 +1,12 @@
 import Leads from "../models/Leads.js";
 
-export const saveGPTResponseInDb = async (messageGpt, threadId) => {
-	
+export const saveGPTResponseInDb = async (idUser, messageGpt, threadId) => {
 	// Save the sent message to the database
 	try {
 		// Find the lead by threadId
-		let lead = await Leads.findOne({ thread_id: threadId });
+		let lead = await Leads.findOne({ id_user: idUser });
 
 		// If the lead does not exist for that thread, there is an error and return
-		// ACA VER QUE HACER XQ TENDRIA QUE MANEJAR ESTE ERROR
 		if (lead === null) {
 			console.log(
 				`An error has ocurred finding thread_id ${threadId} in Leads DB!!`
@@ -32,6 +30,7 @@ export const saveGPTResponseInDb = async (messageGpt, threadId) => {
 
 		// Update the lead content
 		lead.content = newContent;
+		lead.thread_id = threadId;
 
 		// Save the updated lead
 		await lead.save();
@@ -40,7 +39,8 @@ export const saveGPTResponseInDb = async (messageGpt, threadId) => {
 
 		return;
 	} catch (error) {
-		console.log(`Error in saveGPTResponse.js while saving message: ${error.message}`
+		console.log(
+			`Error in saveGPTResponse.js while saving message: ${error.message}`
 		);
 		throw new Error(error.message);
 	}
