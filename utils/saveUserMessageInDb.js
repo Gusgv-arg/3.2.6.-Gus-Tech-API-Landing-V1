@@ -20,7 +20,7 @@ export const saveUserMessageInDb = async (newMessage, threadId) => {
 
 	// Save the sent message to the database
 	try {
-		
+		//IMPORTANTE!! ACA TENGO Q MODIFICAR PARA QUE BUSQUE X ID Y NO POR THREADID!!!!!!!!!!!
 		// Find the lead by threadId
 		let lead = await Leads.findOne({ thread_id: threadId });
 		
