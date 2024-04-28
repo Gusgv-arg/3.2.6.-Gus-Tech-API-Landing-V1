@@ -1,4 +1,4 @@
-import { processMessageWithOpenAiAssistant } from "../utils/ProcessMessageWithOpenAiAssistant.js";
+import { processMessageWithOpenAiAssistant } from "../utils/processMessageWithOpenAiAssistant.js";
 import { processQuestionWithApi } from "../utils/processQuestionWithApi.js";
 import { saveUserQuestionInDb } from "../utils/saveUserQuestionInDb.js";
 
