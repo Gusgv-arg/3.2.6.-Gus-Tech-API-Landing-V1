@@ -21,7 +21,10 @@ const app = express();
 // Cors config
 app.use(
 	cors({
-		origin: ["http://localhost:3000", "https://api-landingpage.onrender.com"],
+		origin: [
+			"http://localhost:3000",
+			"https://three-2-6-megabot-landing.onrender.com",
+		],
 		credentials: true,
 		methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
 		allowedHeaders: [
