@@ -11,6 +11,8 @@ const API_KEY = process.env.API_KEY_CHATGPT;
 
 const openai = new OpenAI({
 	apiKey: API_KEY,
+	organization: "org-6qNfHtCMODNqGNtPAbbhLhfA",
+	project: "proj_cLySVdd60XL8zbjd9zc8gGMH"
 });
 
 export const processMessageWithOpenAiAssistant = async (newMessage) => {
