@@ -71,13 +71,11 @@ export const processMessageWithOpenAiAssistant = async (newMessage) => {
 		threadId = thread.id;
 		//console.log("threadId:", threadId)
 
-		// Attach all the messages to thread
-		newMessage.forEach(async (message) => {
-			await openai.beta.threads.messages.create(threadId, {
-				role: message.role,
-				content: message.content,
-			});
-		});
+		// Attach messages to thread
+		await openai.beta.threads.messages.create(threadId, {
+			role: newMessage.role,
+			content: newMessage.content,
+		})		
 	}
 	// Save the received message from USER to the database
 	await saveUserMessageInDb(newMessage, threadId);
@@ -103,6 +101,10 @@ export const processMessageWithOpenAiAssistant = async (newMessage) => {
 				// Run the assistant normally without streaming
 				run = await openai.beta.threads.runs.create(threadId, {
 					assistant_id: assistantId,
+					//max_prompt_tokens: 1500,
+					//max_completion_tokens: 1000,
+					temperature: 0.2,
+					//truncation_strategy: {"type": "last_messages"}
 				});
 				//console.log("run----->", run);
 			} else {
