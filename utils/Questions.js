@@ -1,7 +1,7 @@
 export const question1 =
 	"1. ¿Cómo se hace para que el Chatbot sepa de mi negocio?";
 export const answerQuestion1 =
-	"1. Se realiza lo que se denomina entrenamiento; que básicamente consiste en proveer al modelo con la información de sue empresa y al caso de uso. Esta información puede provenir de la página web, archivos (word, pdf, txt, etc).";
+	"1. Se realiza lo que se denomina entrenamiento; que básicamente consiste en proveer al modelo con la información de su empresa y al caso de uso. Esta información puede provenir de la página web, archivos (word, pdf, txt, etc).";
 
 export const question2 = "2. ¿Cuánto se tarda en implementar un Chatbot de IA?";
 export const answerQuestion2 =
