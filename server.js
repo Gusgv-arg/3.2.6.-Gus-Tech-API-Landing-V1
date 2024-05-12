@@ -24,6 +24,7 @@ app.use(
 		origin: [
 			"http://localhost:3000",
 			"https://three-2-6-megabot-landing.onrender.com",
+			"https://www.gus-tech.com"
 		],
 		credentials: true,
 		methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
