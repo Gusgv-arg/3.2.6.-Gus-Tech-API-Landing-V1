@@ -44,11 +44,10 @@ export const processMessageWithOpenAiAssistant = async (newMessage, files, baseU
 	//console.log("name------>", name)
 	console.log("image desde processMessage...---->", files);
 	console.log("original name---->", files[0].originalname);
-	const imageUrl = `http://${baseUrl}/uploads/${encodeURIComponent(files[0].originalname)}`;
+	const imageUrl = `${baseUrl}/uploads/${encodeURIComponent(files[0].originalname)}`;
 	//const imageUrl = `https://literally-humble-bee.ngrok-free.app/uploads/${encodeURIComponent(files[0].originalname)}`;
 	console.log("imageURL:", imageUrl)
-	console.log("host", hostname)
-
+	
 	// Check if there is an existing thread for the user
 	let existingThread;
 

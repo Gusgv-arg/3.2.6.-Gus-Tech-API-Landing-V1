@@ -12,8 +12,7 @@ export const megaBotController = async (req, res) => {
 			? JSON.parse(req.body.messages)
 			: req.body.messages;
 	const files = req.files ? req.files : "";
-	const hostname = req.hostname;
-	console.log("hostname:", hostname);
+	
 	const port = process.env.PORT || 4000;
 	console.log("port:", port);
 	const baseUrl = `${req.protocol}://${req.get('host')}`;
