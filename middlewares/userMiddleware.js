@@ -1,18 +1,16 @@
 import Leads from "../models/Leads.js";
 
 export const userMiddleware = async (req, res, next) => {
-	const newMessage = req.body.messages;
-	const id = newMessage[newMessage.length - 1]?.id_user
-		? newMessage[newMessage.length - 1].id_user
-		: newMessage.id_user;
-
-	const name = newMessage[newMessage.length - 1]?.name
-		? newMessage[newMessage.length - 1].name
-		: newMessage.name;
-
-	const channel = newMessage[newMessage.length - 1]?.channel
-		? newMessage[newMessage.length - 1].channel
-		: newMessage.channel;
+	// Parsear 'messages' que viene como string JSON
+    //const newMessage = req.body.messages ? JSON.parse(req.body.messages) : req.body;
+    
+	const newMessage = typeof req.body.messages === 'string' ? JSON.parse(req.body.messages) : req.body.messages;
+    console.log("newMessage en userMiddleware.js", newMessage);
+    console.log("Files desde user Middleware:", req.files); // Para ver los archivos recibidos
+		
+	const id = newMessage.id_user;
+	const name = newMessage.name;
+	const channel = newMessage.channel;
 
 	try {
 		let lead = await Leads.findOne({ id_user: id });
@@ -49,5 +47,5 @@ export const userMiddleware = async (req, res, next) => {
 	} catch (error) {
 		console.log("Error en userMiddleware:", error.message);
 		throw error;
-	}
+	} 
 };

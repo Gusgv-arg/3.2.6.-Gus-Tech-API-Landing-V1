@@ -12,10 +12,10 @@ const API_KEY = process.env.API_KEY_CHATGPT;
 const openai = new OpenAI({
 	apiKey: API_KEY,
 	organization: "org-6qNfHtCMODNqGNtPAbbhLhfA",
-	project: "proj_cLySVdd60XL8zbjd9zc8gGMH"
+	project: "proj_cLySVdd60XL8zbjd9zc8gGMH",
 });
 
-export const processMessageWithOpenAiAssistant = async (newMessage) => {
+export const processMessageWithOpenAiAssistant = async (newMessage, files, baseUrl) => {
 	const assistantId = process.env.OPENAI_ASSISTANT_ID;
 	let threadId;
 
@@ -28,20 +28,26 @@ export const processMessageWithOpenAiAssistant = async (newMessage) => {
 		? newMessage[newMessage.length - 1].id_user
 		: newMessage.id_user;
 
-	const content = newMessage[newMessage.length - 1]?.content
+	let content = newMessage[newMessage.length - 1]?.content
 		? newMessage[newMessage.length - 1].content
 		: newMessage.content;
-
+	
 	const channel = newMessage[newMessage.length - 1]?.channel
 		? newMessage[newMessage.length - 1].channel
 		: newMessage.channel;
-	
+
 	const role = newMessage[newMessage.length - 1]?.role
 		? newMessage[newMessage.length - 1].role
 		: newMessage.role;
 
 	//console.log("newMessage en processMessage...:", newMessage);
 	//console.log("name------>", name)
+	console.log("image desde processMessage...---->", files);
+	console.log("original name---->", files[0].originalname);
+	const imageUrl = `http://${baseUrl}/uploads/${encodeURIComponent(files[0].originalname)}`;
+	//const imageUrl = `https://literally-humble-bee.ngrok-free.app/uploads/${encodeURIComponent(files[0].originalname)}`;
+	console.log("imageURL:", imageUrl)
+	console.log("host", hostname)
 
 	// Check if there is an existing thread for the user
 	let existingThread;
@@ -50,7 +56,7 @@ export const processMessageWithOpenAiAssistant = async (newMessage) => {
 		existingThread = await Leads.findOne({
 			id_user: idUser, //Last record of messages
 			thread_id: { $exists: true, $ne: "" },
-		});		
+		});
 	} catch (error) {
 		console.error("Error fetching thread from the database:", error.message);
 		throw error;
@@ -60,11 +66,31 @@ export const processMessageWithOpenAiAssistant = async (newMessage) => {
 		threadId = existingThread.thread_id;
 		//console.log("existringThread--->", existingThread)
 
-		// Pass in the user question into the existing thread
-		await openai.beta.threads.messages.create(threadId, {
-			role: "user",
-			content: content,
-		});
+		if (imageUrl) {
+			await openai.beta.threads.messages.create(threadId, {
+				role: "user",
+				content: [
+					{
+						type: "text",
+						text: content,
+					},
+					// Supported values: 'text', 'image_url', and 'image_file'.
+					{
+						type: "image_url",
+						image_url: {
+							url: imageUrl,
+						},
+					}
+					
+				],
+			});
+		} else {
+			// Pass in the user question into the existing thread
+			await openai.beta.threads.messages.create(threadId, {
+				role: "user",
+				content: content,
+			});
+		}
 	} else {
 		// Create a new thread because its a new customer
 		const thread = await openai.beta.threads.create();
@@ -74,8 +100,8 @@ export const processMessageWithOpenAiAssistant = async (newMessage) => {
 		// Attach messages to thread
 		await openai.beta.threads.messages.create(threadId, {
 			role: newMessage.role,
-			content: newMessage.content,
-		})		
+			content: content,
+		});
 	}
 	// Save the received message from USER to the database
 	await saveUserMessageInDb(newMessage, threadId);
@@ -85,19 +111,17 @@ export const processMessageWithOpenAiAssistant = async (newMessage) => {
 	let currentAttempt = 0;
 	let runStatus;
 	let run;
-	let specialInstructions;
 
 	do {
 		try {
-			// Check if there are key words and if so pass it to the run
-			//const instructions = await matchkeyWords(newMessage);
+			let additionalInstructions = "";
 
-			//Variable created to save in Messages DB
-			//specialInstructions = instructions;
+			if (imageUrl) {
+				additionalInstructions =
+					"El usuario ha enviado un texto y una imágen. Responde a su consulta utilizando tu capacidad para procesar imágenes.";
+			}
 
-			let instructions = "";
-
-			if (instructions === "") {
+			if (additionalInstructions === "") {
 				// Run the assistant normally without streaming
 				run = await openai.beta.threads.runs.create(threadId, {
 					assistant_id: assistantId,
@@ -111,12 +135,11 @@ export const processMessageWithOpenAiAssistant = async (newMessage) => {
 				// run the assistant with special instructions
 				console.log(
 					"Running assistant with special instructions!!\n",
-					instructions
+					additionalInstructions
 				);
 				run = await openai.beta.threads.runs.create(threadId, {
 					assistant_id: assistantId,
-					//instructions: instructions,
-					//additional_instructions: instructions,
+					//additional_instructions: additionalInstructions,
 				});
 			}
 
@@ -132,7 +155,7 @@ export const processMessageWithOpenAiAssistant = async (newMessage) => {
 			break; // Exit the loop if the run is completed
 		} catch (error) {
 			console.error(
-				`7. Error running the assistant for --> ${newMessage.name}: "${newMessage.receivedMessage}", ${error.message}`
+				`7. Error running the assistant for --> ${newMessage.name}: "${content}", ${error.message}`
 			);
 			currentAttempt++;
 			if (currentAttempt >= maxAttempts || error) {
@@ -163,7 +186,7 @@ export const processMessageWithOpenAiAssistant = async (newMessage) => {
 
 		//Save the received message from the ASSISTANT to the database
 		await saveGPTResponseInDb(idUser, messageGpt, threadId);
-		
+
 		return { messageGpt, threadId };
 	}
 };
