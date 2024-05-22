@@ -67,7 +67,7 @@ export const processMessageWithOpenAiAssistant = async (newMessage, files, baseU
 
 		if (imageUrl) {
 			await openai.beta.threads.messages.create(threadId, {
-				role: "user",
+				role: newMessage.role,
 				content: [
 					{
 						type: "text",
@@ -86,7 +86,7 @@ export const processMessageWithOpenAiAssistant = async (newMessage, files, baseU
 		} else {
 			// Pass in the user question into the existing thread
 			await openai.beta.threads.messages.create(threadId, {
-				role: "user",
+				role: newMessage.role,
 				content: content,
 			});
 		}
@@ -95,12 +95,31 @@ export const processMessageWithOpenAiAssistant = async (newMessage, files, baseU
 		const thread = await openai.beta.threads.create();
 		threadId = thread.id;
 		//console.log("threadId:", threadId)
-
-		// Attach messages to thread
-		await openai.beta.threads.messages.create(threadId, {
-			role: newMessage.role,
-			content: content,
-		});
+		
+		if (imageUrl) {
+			await openai.beta.threads.messages.create(threadId, {
+				role: newMessage.role,
+				content: [
+					{
+						type: "text",
+						text: content,
+					},
+					{
+						type: "image_url",
+						image_url: {
+							url: imageUrl,
+						},
+					}
+					
+				],
+			});
+		} else {
+			// Pass in the user question into the new thread
+			await openai.beta.threads.messages.create(threadId, {
+				role: newMessage.role,
+				content: content,
+			});
+		}
 	}
 	// Save the received message from USER to the database
 	await saveUserMessageInDb(newMessage, threadId);
