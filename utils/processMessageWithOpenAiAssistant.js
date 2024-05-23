@@ -15,9 +15,14 @@ const openai = new OpenAI({
 	project: "proj_cLySVdd60XL8zbjd9zc8gGMH",
 });
 
-export const processMessageWithOpenAiAssistant = async (newMessage, files, baseUrl) => {
+export const processMessageWithOpenAiAssistant = async (
+	newMessage,
+	files,
+	baseUrl
+) => {
 	const assistantId = process.env.OPENAI_ASSISTANT_ID;
 	let threadId;
+	let imageUrl;
 
 	//Variables depend on wether its a new customer (sends an array) or not (sends object)
 	const name = newMessage[newMessage.length - 1]?.name
@@ -31,7 +36,7 @@ export const processMessageWithOpenAiAssistant = async (newMessage, files, baseU
 	let content = newMessage[newMessage.length - 1]?.content
 		? newMessage[newMessage.length - 1].content
 		: newMessage.content;
-	
+
 	const channel = newMessage[newMessage.length - 1]?.channel
 		? newMessage[newMessage.length - 1].channel
 		: newMessage.channel;
@@ -42,12 +47,16 @@ export const processMessageWithOpenAiAssistant = async (newMessage, files, baseU
 
 	//console.log("newMessage en processMessage...:", newMessage);
 	//console.log("name------>", name)
-	console.log("image desde processMessage...---->", files);
-	console.log("original name---->", files[0].originalname);
-	const imageUrl = `${baseUrl}/uploads/${encodeURIComponent(files[0].originalname)}`;
-	//const imageUrl = `https://literally-humble-bee.ngrok-free.app/uploads/${encodeURIComponent(files[0].originalname)}`;
-	console.log("imageURL:", imageUrl)
-	
+	if (files.length > 0) {
+		console.log("image desde processMessage...---->", files);
+		console.log("original name---->", files[0]?.originalname);
+		//const imageUrl = `${baseUrl}/uploads/${encodeURIComponent(files[0].originalname)}`;
+		imageUrl = `https://literally-humble-bee.ngrok-free.app/uploads/${encodeURIComponent(
+			files[0].originalname
+		)}`;
+		console.log("imageURL:", imageUrl);
+	}
+
 	// Check if there is an existing thread for the user
 	let existingThread;
 
@@ -72,15 +81,13 @@ export const processMessageWithOpenAiAssistant = async (newMessage, files, baseU
 					{
 						type: "text",
 						text: content,
-					},
-					// Supported values: 'text', 'image_url', and 'image_file'.
+					},					
 					{
 						type: "image_url",
 						image_url: {
 							url: imageUrl,
 						},
-					}
-					
+					},
 				],
 			});
 		} else {
@@ -95,7 +102,7 @@ export const processMessageWithOpenAiAssistant = async (newMessage, files, baseU
 		const thread = await openai.beta.threads.create();
 		threadId = thread.id;
 		//console.log("threadId:", threadId)
-		
+
 		if (imageUrl) {
 			await openai.beta.threads.messages.create(threadId, {
 				role: newMessage.role,
@@ -109,8 +116,7 @@ export const processMessageWithOpenAiAssistant = async (newMessage, files, baseU
 						image_url: {
 							url: imageUrl,
 						},
-					}
-					
+					},
 				],
 			});
 		} else {
@@ -157,7 +163,7 @@ export const processMessageWithOpenAiAssistant = async (newMessage, files, baseU
 				);
 				run = await openai.beta.threads.runs.create(threadId, {
 					assistant_id: assistantId,
-					//additional_instructions: additionalInstructions,
+					additional_instructions: additionalInstructions,
 				});
 			}
 
