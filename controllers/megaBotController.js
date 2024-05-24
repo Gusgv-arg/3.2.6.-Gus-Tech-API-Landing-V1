@@ -1,5 +1,6 @@
 import { processMessageWithOpenAiAssistant } from "../utils/processMessageWithOpenAiAssistant.js";
 import { processQuestionWithApi } from "../utils/processQuestionWithApi.js";
+import { saveQuestionInThread } from "../utils/saveQuestionInThread.js";
 import { saveUserQuestionInDb } from "../utils/saveUserQuestionInDb.js";
 import dotenv from "dotenv";
 
@@ -24,8 +25,11 @@ export const megaBotController = async (req, res) => {
 		// If user asks predefined question
 		if (newMessage.question) {
 			const id_user = newMessage.id_user;
-			//Save user predefined question && answer in DB
+			//Save user predefined Q&A in DB
 			await saveUserQuestionInDb(id_user, newMessage);
+
+			//Save user predefined Q&A in thread
+			await saveQuestionInThread(id_user, newMessage)
 
 			//Process the user question
 			const response = processQuestionWithApi(newMessage);

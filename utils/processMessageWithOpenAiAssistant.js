@@ -50,7 +50,7 @@ export const processMessageWithOpenAiAssistant = async (
 	if (files.length > 0) {
 		console.log("image desde processMessage...---->", files);
 		console.log("original name---->", files[0]?.originalname);
-		const imageUrl = `${baseUrl}/uploads/${encodeURIComponent(files[0].originalname)}`;
+		imageUrl = `${baseUrl}/uploads/${encodeURIComponent(files[0].originalname)}`;
 		//imageUrl = `https://literally-humble-bee.ngrok-free.app/uploads/${encodeURIComponent(files[0].originalname)}`;
 		console.log("imageURL:", imageUrl);
 	}
@@ -73,13 +73,14 @@ export const processMessageWithOpenAiAssistant = async (
 		//console.log("existringThread--->", existingThread)
 
 		if (imageUrl) {
+			console.log("entre aca y cree msje con imagen");
 			await openai.beta.threads.messages.create(threadId, {
 				role: newMessage.role,
 				content: [
 					{
 						type: "text",
 						text: content,
-					},					
+					},
 					{
 						type: "image_url",
 						image_url: {
@@ -102,6 +103,7 @@ export const processMessageWithOpenAiAssistant = async (
 		//console.log("threadId:", threadId)
 
 		if (imageUrl) {
+			console.log("entre aca y cree msje con imagen");
 			await openai.beta.threads.messages.create(threadId, {
 				role: newMessage.role,
 				content: [
@@ -159,10 +161,12 @@ export const processMessageWithOpenAiAssistant = async (
 					"Running assistant with special instructions!!\n",
 					additionalInstructions
 				);
+				
 				run = await openai.beta.threads.runs.create(threadId, {
 					assistant_id: assistantId,
 					additional_instructions: additionalInstructions,
 				});
+				//console.log("runnnn", run)
 			}
 
 			runStatus = await openai.beta.threads.runs.retrieve(threadId, run.id);
@@ -170,6 +174,18 @@ export const processMessageWithOpenAiAssistant = async (
 			while (runStatus.status !== "completed") {
 				await new Promise((resolve) => setTimeout(resolve, 3000));
 				runStatus = await openai.beta.threads.runs.retrieve(threadId, run.id);
+				if (runStatus.status === "failed"){
+					currentAttempt++;
+				}
+				console.log("run status---->", runStatus.status);
+				console.log("Attempts with status = failed:", currentAttempt);
+				if (currentAttempt > maxAttempts) {
+					const errorMessage =
+						"Te pido disculpas 🙏, en este momento no puedo procesar tu solicitud ☹️. Por favor intentá mas tarde. ¡Saludos de MegaBot! 🙂";
+
+					// Exit the loop if maximum attempts are exceeded and send an error message to the user
+					return { errorMessage, threadId };
+				}
 			}
 
 			//console.log(`7. Run completed for --> ${newMessage.name}: "${newMessage.receivedMessage}".`);
