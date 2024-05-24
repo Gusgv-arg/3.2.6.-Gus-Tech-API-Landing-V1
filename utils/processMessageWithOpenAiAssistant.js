@@ -4,6 +4,7 @@ import Leads from "../models/Leads.js";
 import axios from "axios";
 import { saveUserMessageInDb } from "./saveUserMessageInDb.js";
 import { saveGPTResponseInDb } from "./saveGPTResponseInDb.js";
+import { initialGreeting } from "./initialGreeting.js";
 
 dotenv.config();
 
@@ -50,7 +51,9 @@ export const processMessageWithOpenAiAssistant = async (
 	if (files.length > 0) {
 		console.log("image desde processMessage...---->", files);
 		console.log("original name---->", files[0]?.originalname);
-		imageUrl = `${baseUrl}/uploads/${encodeURIComponent(files[0].originalname)}`;
+		imageUrl = `${baseUrl}/uploads/${encodeURIComponent(
+			files[0].originalname
+		)}`;
 		//imageUrl = `https://literally-humble-bee.ngrok-free.app/uploads/${encodeURIComponent(files[0].originalname)}`;
 		console.log("imageURL:", imageUrl);
 	}
@@ -104,27 +107,35 @@ export const processMessageWithOpenAiAssistant = async (
 
 		if (imageUrl) {
 			console.log("entre aca y cree msje con imagen");
-			await openai.beta.threads.messages.create(threadId, {
-				role: newMessage.role,
-				content: [
-					{
-						type: "text",
-						text: content,
-					},
-					{
-						type: "image_url",
-						image_url: {
-							url: imageUrl,
+			await openai.beta.threads.messages.create(
+				threadId,
+				{ role: "assistant", content: initialGreeting },
+				{
+					role: newMessage.role,
+					content: [
+						{
+							type: "text",
+							text: content,
 						},
-					},
-				],
-			});
+						{
+							type: "image_url",
+							image_url: {
+								url: imageUrl,
+							},
+						},
+					],
+				}
+			);
 		} else {
-			// Pass in the user question into the new thread
-			await openai.beta.threads.messages.create(threadId, {
-				role: newMessage.role,
-				content: content,
-			});
+			// Pass in the initial greeting and the user question into the new thread
+			await openai.beta.threads.messages.create(
+				threadId,
+				{ role: "assistant", content: initialGreeting },
+				{
+					role: newMessage.role,
+					content: content,
+				}
+			);
 		}
 	}
 	// Save the received message from USER to the database
@@ -161,7 +172,7 @@ export const processMessageWithOpenAiAssistant = async (
 					"Running assistant with special instructions!!\n",
 					additionalInstructions
 				);
-				
+
 				run = await openai.beta.threads.runs.create(threadId, {
 					assistant_id: assistantId,
 					additional_instructions: additionalInstructions,
@@ -174,7 +185,7 @@ export const processMessageWithOpenAiAssistant = async (
 			while (runStatus.status !== "completed") {
 				await new Promise((resolve) => setTimeout(resolve, 3000));
 				runStatus = await openai.beta.threads.runs.retrieve(threadId, run.id);
-				if (runStatus.status === "failed"){
+				if (runStatus.status === "failed") {
 					currentAttempt++;
 				}
 				console.log("run status---->", runStatus.status);

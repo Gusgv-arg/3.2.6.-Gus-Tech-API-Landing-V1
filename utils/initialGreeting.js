@@ -1,0 +1,1 @@
+export const initialGreeting = "¡Hola!👋 Soy MegaBot, Asistente virtual impulsado por Inteligencia Artificial entrenado para ayudarte a entender como puedo ayudarte a potenciar tu negocio con esta tecnología. Para comenzar podes seleccionar una pregunta o directamente conversar. ¿Empezamos? 🚀"

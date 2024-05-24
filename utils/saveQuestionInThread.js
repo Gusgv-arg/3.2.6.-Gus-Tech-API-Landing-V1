@@ -7,6 +7,7 @@ import {
 	answerQuestion2,
 	answerQuestion3,
 } from "../utils/Questions.js";
+import { initialGreeting } from "./initialGreeting.js";
 
 dotenv.config();
 
@@ -69,6 +70,7 @@ export const saveQuestionInThread = async (id_user, newMessage) => {
 		// Pass in the user question into the new thread
 		await openai.beta.threads.messages.create(
 			threadId,
+			{ role: "assistant", content: initialGreeting },
 			{
 				role: newMessage.role,
 				content: newMessage.content,
