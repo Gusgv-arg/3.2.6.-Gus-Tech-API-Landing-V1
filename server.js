@@ -49,6 +49,9 @@ app.use('/uploads', express.static('uploads'));
 
 // Routes
 app.use("/megabot", megaBotRouter);
+app.use("/", (req, res)=>{
+	res.status(200).send("Estoy prendido!!")
+});
 
 // Port
 const port = process.env.PORT || 4000;
