@@ -10,7 +10,7 @@ dotenv.config();
 //Connect with DB
 try {
 	await mongoose.connect(process.env.MONGODB_URI);
-	console.log("Connected to MegaBot data base!");
+	console.log("Connected to Gus-Tech data base!");
 } catch (error) {
 	console.log("Error while connecting with DB", error.message);
 }
@@ -26,7 +26,8 @@ app.use(
 			"https://three-2-6-megabot-landing.onrender.com",
 			"https://three-2-6-api-megabot-v1.onrender.com",
 			"https://www.gus-tech.com", 
-			"https://3-2-6-mega-bot-landing.vercel.app"
+			"https://3-2-6-mega-bot-landing.vercel.app",
+			"https://three-2-6-api-megabot-v1.onrender.com/megabot"
 		],
 		credentials: true,
 		methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
