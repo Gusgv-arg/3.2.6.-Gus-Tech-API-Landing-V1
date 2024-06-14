@@ -22,12 +22,10 @@ const app = express();
 app.use(
 	cors({
 		origin: [
-			"http://localhost:3000",
-			"https://three-2-6-megabot-landing.onrender.com",
-			"https://three-2-6-api-megabot-v1.onrender.com",
+			"http://localhost:3000",			
 			"https://www.gus-tech.com",
 			"https://3-2-6-mega-bot-landing.vercel.app",
-			"https://three-2-6-api-megabot-v1.onrender.com/megabot",
+			"https://3-2-6-gus-tech-api-landing-v1.vercel.app",
 		],
 		credentials: true,
 		methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
