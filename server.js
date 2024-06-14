@@ -25,9 +25,9 @@ app.use(
 			"http://localhost:3000",
 			"https://three-2-6-megabot-landing.onrender.com",
 			"https://three-2-6-api-megabot-v1.onrender.com",
-			"https://www.gus-tech.com", 
+			"https://www.gus-tech.com",
 			"https://3-2-6-mega-bot-landing.vercel.app",
-			"https://three-2-6-api-megabot-v1.onrender.com/megabot"
+			"https://three-2-6-api-megabot-v1.onrender.com/megabot",
 		],
 		credentials: true,
 		methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
@@ -42,17 +42,17 @@ app.use(
 );
 
 // Middlewares
-app.use(express.json({ limit: '50mb' }));
+app.use(express.json({ limit: "50mb" }));
 app.use(morgan("dev"));
-app.use(express.urlencoded({ extended: true, limit: '50mb' }));
+app.use(express.urlencoded({ extended: true, limit: "50mb" }));
 
 // Middleware para servir archivos estáticos
-app.use('/uploads', express.static('uploads'));
+app.use("/uploads", express.static("uploads"));
 
 // Routes
 app.use("/megabot", megaBotRouter);
-app.use("/", (req, res)=>{
-	res.status(200).send("Estoy prendido!!")
+app.use("/", (req, res) => {
+	res.status(200).send("Estoy prendido!!");
 });
 
 // Port
