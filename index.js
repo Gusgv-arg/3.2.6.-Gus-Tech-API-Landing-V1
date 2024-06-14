@@ -26,6 +26,7 @@ app.use(
 			"https://www.gus-tech.com",
 			"https://3-2-6-mega-bot-landing.vercel.app",
 			"https://3-2-6-gus-tech-api-landing-v1.vercel.app",
+			"https://3-2-6-gus-tech-api-landing-v1.vercel.app/megabot",
 		],
 		credentials: true,
 		methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
