@@ -51,9 +51,7 @@ export const processMessageWithOpenAiAssistant = async (
 	if (files.length > 0) {
 		console.log("image desde processMessage...---->", files);
 		console.log("original name---->", files[0]?.originalname);
-		imageUrl = `${baseUrl}/uploads/${encodeURIComponent(
-			files[0].originalname
-		)}`;
+		imageUrl = `${baseUrl}/uploads/${encodeURIComponent(files[0].originalname)}`;
 		//imageUrl = `https://literally-humble-bee.ngrok-free.app/uploads/${encodeURIComponent(files[0].originalname)}`;
 		console.log("imageURL:", imageUrl);
 	}
