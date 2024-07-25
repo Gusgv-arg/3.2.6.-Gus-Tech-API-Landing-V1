@@ -6,7 +6,6 @@ import { saveUserMessageInDb } from "./saveUserMessageInDb.js";
 import { saveGPTResponseInDb } from "./saveGPTResponseInDb.js";
 import { initialGreeting } from "./initialGreeting.js";
 import audioToText from "../utils/audioTotext.js";
-import textToAudio from "./textToAudio.js";
 
 dotenv.config();
 
