@@ -47,7 +47,7 @@ export const megaBotController = async (req, res) => {
 			console.log("GPT response:", response);
 
 			if (newMessage.type === "audio") {
-				const audioFilePath = textToAudio(response.content);
+				const audioFilePath = await textToAudio(response.content);
 
 				res
 					.status(200)
