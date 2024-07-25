@@ -38,7 +38,7 @@ export class MessageQueue {
 					//Process the user question
 					const response = processQuestionWithApi(newMessage);
 
-					// Excecute callback for be able to respond the user (res object)
+					// Excecute callback for be able to respond the user (res object).
 					queue.responseCallback(null, response);
 					
 					// Pass the user non predefinded question to the GPT

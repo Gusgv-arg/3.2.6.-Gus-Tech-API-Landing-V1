@@ -5,6 +5,7 @@ import axios from "axios";
 import { saveUserMessageInDb } from "./saveUserMessageInDb.js";
 import { saveGPTResponseInDb } from "./saveGPTResponseInDb.js";
 import { initialGreeting } from "./initialGreeting.js";
+import audioToText from "../utils/audioTotext.js"
 
 dotenv.config();
 
@@ -48,12 +49,17 @@ export const processMessageWithOpenAiAssistant = async (
 
 	//console.log("newMessage en processMessage...:", newMessage);
 	//console.log("name------>", name)
-	if (files.length > 0) {
+	if (files.length > 0 && files[0].mimetype.includes("image")) {
 		console.log("image desde processMessage...---->", files);
 		console.log("original name---->", files[0]?.originalname);
 		imageUrl = `${baseUrl}/uploads/${encodeURIComponent(files[0].originalname)}`;
 		//imageUrl = `https://literally-humble-bee.ngrok-free.app/uploads/${encodeURIComponent(files[0].originalname)}`;
 		console.log("imageURL:", imageUrl);
+	} else if (files.length > 0 && files[0].mimetype.includes("audio")){
+		console.log("Entro un audio")
+		const audioTranscription = await audioToText(files[0])
+		console.log("Audio trascription:", audioTranscription)
+		content = audioTranscription
 	}
 
 	// Check if there is an existing thread for the user

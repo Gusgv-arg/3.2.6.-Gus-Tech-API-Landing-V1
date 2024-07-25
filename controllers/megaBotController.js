@@ -21,10 +21,10 @@ export const megaBotController = async (req, res) => {
 	const files = req.files ? req.files : "";
 
 	const port = process.env.PORT || 4000;
-	console.log("port:", port);
+	//console.log("port:", port);
 
 	const baseUrl = `${req.protocol}://${req.get("host")}`;
-	console.log("baseUrl", baseUrl);
+	//console.log("baseUrl", baseUrl);
 
 	//console.log("newmessages en megabotcontroller---->", newMessage)
 
