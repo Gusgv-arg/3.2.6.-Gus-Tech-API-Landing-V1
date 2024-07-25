@@ -5,6 +5,7 @@ import { saveGPTResponseInDb } from "../utils/saveGPTResponseInDb.js";
 import { saveQuestionInThread } from "../utils/saveQuestionInThread.js";
 import { saveUserQuestionInDb } from "../utils/saveUserQuestionInDb.js";
 import dotenv from "dotenv";
+import textToAudio from "../utils/textToAudio.js";
 
 dotenv.config();
 
@@ -38,22 +39,29 @@ export const megaBotController = async (req, res) => {
 				console.log("An error occurred:", error.message);
 				return res.status(500).send({
 					role: "assistant",
-                    content:
+					content:
 						"¡Disculpas! Nuestro asistente virtual MegaBot no pudo procesar tu mensaje. ¡Podés intentar más tarde o por Facebook / Instagram!",
 				});
-			}			
-			
-            console.log("GPT response:", response);
-			
-            // Envía la respuesta procesada al cliente web
-			res.status(200).send({
-				role: "assistant",
-				content: response?.content
-					? response.content
-					: response.answerQuestion
-					? response.answerQuestion
-					: "No GPT response"
-			});
+			}
+
+			console.log("GPT response:", response);
+
+			if (newMessage.type === "audio") {
+				const audioFilePath = textToAudio(response.content);
+
+				res
+					.status(200)
+					.sendFile(audioFilePath);
+			} else {
+				res.status(200).send({
+					role: "assistant",
+					content: response?.content
+						? response.content
+						: response.answerQuestion
+						? response.answerQuestion
+						: "No GPT response",
+				});
+			}
 		}
 	);
 };

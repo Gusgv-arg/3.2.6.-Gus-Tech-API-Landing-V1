@@ -5,7 +5,8 @@ import axios from "axios";
 import { saveUserMessageInDb } from "./saveUserMessageInDb.js";
 import { saveGPTResponseInDb } from "./saveGPTResponseInDb.js";
 import { initialGreeting } from "./initialGreeting.js";
-import audioToText from "../utils/audioTotext.js"
+import audioToText from "../utils/audioTotext.js";
+import textToAudio from "./textToAudio.js";
 
 dotenv.config();
 
@@ -49,17 +50,21 @@ export const processMessageWithOpenAiAssistant = async (
 
 	//console.log("newMessage en processMessage...:", newMessage);
 	//console.log("name------>", name)
+
+	// Check if its an audio or an image
 	if (files.length > 0 && files[0].mimetype.includes("image")) {
 		console.log("image desde processMessage...---->", files);
-		console.log("original name---->", files[0]?.originalname);
-		imageUrl = `${baseUrl}/uploads/${encodeURIComponent(files[0].originalname)}`;
+		imageUrl = `${baseUrl}/uploads/${encodeURIComponent(
+			files[0].originalname
+		)}`;
 		//imageUrl = `https://literally-humble-bee.ngrok-free.app/uploads/${encodeURIComponent(files[0].originalname)}`;
 		console.log("imageURL:", imageUrl);
-	} else if (files.length > 0 && files[0].mimetype.includes("audio")){
-		console.log("Entro un audio")
-		const audioTranscription = await audioToText(files[0])
-		console.log("Audio trascription:", audioTranscription)
-		content = audioTranscription
+	} else if (files.length > 0 && files[0].mimetype.includes("audio")) {
+		const audioTranscription = await audioToText(files[0]);
+		console.log("Audio trascription:", audioTranscription);
+		content = audioTranscription;		
+	} else if (files.length > 0) {
+		console.log("File sent with an unknown format!!!");
 	}
 
 	// Check if there is an existing thread for the user
@@ -193,6 +198,7 @@ export const processMessageWithOpenAiAssistant = async (
 					currentAttempt++;
 				}
 				console.log("run status---->", runStatus.status);
+				console.log("run status---->", runStatus);
 				console.log("Attempts with status = failed:", currentAttempt);
 				if (currentAttempt > maxAttempts) {
 					const errorMessage =
