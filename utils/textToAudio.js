@@ -12,7 +12,7 @@ const openai = new OpenAI({
 	project: "proj_cLySVdd60XL8zbjd9zc8gGMH",
 });
 
-const speechFile = path.resolve("assets/speech.mp3");
+const speechFile = path.resolve(__dirname, '..', 'assets', 'speech.mp3');
 
 async function textToAudio(content) {
 	console.log("Comienzo a ejecutar textToAudio!!");
