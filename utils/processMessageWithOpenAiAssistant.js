@@ -5,7 +5,7 @@ import axios from "axios";
 import { saveUserMessageInDb } from "./saveUserMessageInDb.js";
 import { saveGPTResponseInDb } from "./saveGPTResponseInDb.js";
 import { initialGreeting } from "./initialGreeting.js";
-import audioToText from "../utils/audioTotext.js";
+import audioToText from "../utils/audioToText.js";
 
 dotenv.config();
 
