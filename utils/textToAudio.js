@@ -4,7 +4,7 @@ import OpenAI from "openai";
 import dotenv from "dotenv";
 dotenv.config();
 
-//const API_KEY = process.env.API_KEY_CHATGPT;
+const API_KEY = process.env.API_KEY_CHATGPT;
 
 const openai = new OpenAI({
 	apiKey: API_KEY,
@@ -15,17 +15,17 @@ const openai = new OpenAI({
 const speechFile = path.resolve("assets/speech.mp3");
 
 async function textToAudio(content) {
-  console.log("Comienzo a ejecutar textToAudio!!")
-    const mp3 = await openai.audio.speech.create({
-    model: "tts-1",
-    voice: "onyx",
-    input: content,
-  });
-  console.log(speechFile);
-  const buffer = Buffer.from(await mp3.arrayBuffer());
-  await fs.promises.writeFile(speechFile, buffer);
+	console.log("Comienzo a ejecutar textToAudio!!");
+	const mp3 = await openai.audio.speech.create({
+		model: "tts-1",
+		voice: "onyx",
+		input: content,
+	});
+	console.log(speechFile);
+	const buffer = Buffer.from(await mp3.arrayBuffer());
+	await fs.promises.writeFile(speechFile, buffer);
 
-  return speechFile
+	return speechFile;
 }
 
-export default textToAudio
+export default textToAudio;
