@@ -197,7 +197,7 @@ export const processMessageWithOpenAiAssistant = async (
 					currentAttempt++;
 				}
 				console.log("run status---->", runStatus.status);
-				console.log("run status---->", runStatus);
+				console.log("run last_error---->", runStatus.last_error);
 				console.log("Attempts with status = failed:", currentAttempt);
 				if (currentAttempt > maxAttempts) {
 					const errorMessage =
