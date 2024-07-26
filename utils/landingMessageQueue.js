@@ -39,11 +39,8 @@ export class MessageQueue {
 					const response = processQuestionWithApi(newMessage);
 
 					// Excecute callback for be able to respond the user (res object).
-					if (!queue.responseSent) {
-						queue.responseCallback(null, response);
-						queue.responseSent = true;
-					}
-					
+					queue.responseCallback(null, response);
+										
 					// Pass the user non predefinded question to the GPT
 				} else {
 					const response = await processMessageWithOpenAiAssistant(
@@ -54,15 +51,12 @@ export class MessageQueue {
 					//console.log("response GPT:", response)
 					
 					// Excecute callback for be able to respond the user (res object)
-					if (!queue.responseSent) {
-						queue.responseCallback(null, {
+					queue.responseCallback(null, {
 							content: response?.messageGpt
 								? response.messageGpt
 								: response.errorMessage,
 							threadId: response.threadId,
-						});
-						queue.responseSent = true;
-					}
+						});					
 				}
 			} catch (error) {
 				console.error(`14. Error processing message: ${error.message}`);
@@ -90,8 +84,7 @@ export class MessageQueue {
 				messages: [],
 				files: [],
 				processing: false,
-				responseCallback: null,
-				responseSent: false, //This flag is for sending only 1 res to the client
+				responseCallback: null,				 
 			});
 		}
 
