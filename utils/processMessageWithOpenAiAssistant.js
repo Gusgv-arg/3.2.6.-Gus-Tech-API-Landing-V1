@@ -97,6 +97,7 @@ export const processMessageWithOpenAiAssistant = async (
 						type: "image_url",
 						image_url: {
 							url: imageUrl,
+							detail: "high"
 						},
 					},
 				],
@@ -130,6 +131,7 @@ export const processMessageWithOpenAiAssistant = async (
 							type: "image_url",
 							image_url: {
 								url: imageUrl,
+								detail: "high"
 							},
 						},
 					],
