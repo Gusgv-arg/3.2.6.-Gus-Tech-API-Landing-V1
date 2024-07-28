@@ -61,7 +61,8 @@ export const processMessageWithOpenAiAssistant = async (
 	} else if (files.length > 0 && files[0].mimetype.includes("audio")) {
 		const audioTranscription = await audioToText(files[0]);
 		console.log("Audio trascription:", audioTranscription);
-		content = audioTranscription;		
+		content = audioTranscription;
+		newMessage.content = audioTranscription		
 	} else if (files.length > 0) {
 		console.log("File sent with an unknown format!!!");
 	}
