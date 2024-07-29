@@ -164,7 +164,7 @@ export const processMessageWithOpenAiAssistant = async (
 
 			if (imageUrl) {
 				additionalInstructions =
-					"El usuario ha enviado un texto y una imágen. Responde a su consulta utilizando tu capacidad para procesar imágenes.";
+					"El usuario ha enviado una imágen. Responde a su consulta utilizando tu capacidad para procesar imágenes.";
 			}
 
 			if (additionalInstructions === "") {
