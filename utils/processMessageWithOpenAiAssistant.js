@@ -104,6 +104,7 @@ export const processMessageWithOpenAiAssistant = async (
 			});
 		} else {
 			// Pass in the user question into the existing thread
+			console.log("Content-->", content)
 			await openai.beta.threads.messages.create(threadId, {
 				role: newMessage.role,
 				content: content,
@@ -196,15 +197,26 @@ export const processMessageWithOpenAiAssistant = async (
 			while (runStatus.status !== "completed") {
 				await new Promise((resolve) => setTimeout(resolve, 3000));
 				runStatus = await openai.beta.threads.runs.retrieve(threadId, run.id);
+				
+				let errorMessage
 				if (runStatus.status === "failed") {
 					currentAttempt++;
+					const runMessages = await openai.beta.threads.messages.list(threadId);
+					if (runMessages.body.data[0].assistant_id===null || runStatus.last_error !==null){
+						errorMessage = "Hay un problema en el servidor donde tengo la información de Gus-Tech; por lo que voy a comenzar una nueva conversación. ¿Por favor, me repetirías tu pregunta?"
+					} else {
+						errorMessage =
+							"Te pido disculpas 🙏, en este momento no puedo procesar tu solicitud ☹️. Por favor intentá mas tarde. ¡Saludos de MegaBot! 🙂";
+					}
 				}
+				
 				console.log("run status---->", runStatus.status);
 				console.log("run last_error---->", runStatus.last_error);
 				console.log("Attempts with status = failed:", currentAttempt);
+				const messages2 = await openai.beta.threads.messages.list(threadId);
+				console.log("Assistant Id-------->",messages2.body.data[0].assistant_id)
+				console.log("Message------------->",messages2.body.data[0].content[0].text)
 				if (currentAttempt > maxAttempts) {
-					const errorMessage =
-						"Te pido disculpas 🙏, en este momento no puedo procesar tu solicitud ☹️. Por favor intentá mas tarde. ¡Saludos de MegaBot! 🙂";
 
 					// Exit the loop if maximum attempts are exceeded and send an error message to the user
 					return { errorMessage, threadId };
