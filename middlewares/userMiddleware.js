@@ -1,4 +1,5 @@
 import Leads from "../models/Leads.js";
+import { newLeadWhatsAppNotification } from "../utils/newLeadWhatsAppNotification.js";
 
 export const userMiddleware = async (req, res, next) => {
 	// Parsear 'messages' que viene como string JSON
@@ -40,6 +41,10 @@ export const userMiddleware = async (req, res, next) => {
 				thread_id: "",
 				botSwitch: "ON",
 			});
+
+			// Admin WhatsApp notification of new lead 
+			newLeadWhatsAppNotification(channel, name)
+			
 			next();
 		} else {
 			next();
