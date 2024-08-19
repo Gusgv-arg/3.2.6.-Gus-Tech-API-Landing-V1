@@ -1,6 +1,5 @@
 import dotenv from "dotenv";
 import axios from "axios";
-import { saveMessageInDb } from "../utils/saveMessageInDb.js";
 
 dotenv.config();
 
