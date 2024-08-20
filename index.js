@@ -24,7 +24,8 @@ app.use(
 		origin: [
 			"http://localhost:3000",			
 			"https://www.gus-tech.com",
-			"https://3-2-6-gus-tech-landing.vercel.app"
+			"https://3-2-6-gus-tech-landing.vercel.app",
+			"https://three-2-6-gus-tech-api-landing-v1.onrender.com"
 		],
 		credentials: true,
 		methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
