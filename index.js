@@ -25,7 +25,8 @@ app.use(
 			"http://localhost:3000",			
 			"https://www.gus-tech.com",
 			"https://3-2-6-gus-tech-landing.vercel.app",
-			"https://three-2-6-gus-tech-api-landing-v1.onrender.com"
+			"https://three-2-6-gus-tech-api-landing-v1.onrender.com",
+			"https://three-2-6-gus-tech-api-landing-v1.onrender.com/megabot",
 		],
 		credentials: true,
 		methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
