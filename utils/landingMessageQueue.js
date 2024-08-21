@@ -1,3 +1,4 @@
+import { newErrorWhatsAppNotification } from "./newErrorWhatsAppNotification.js";
 import { processMessageWithOpenAiAssistant } from "./processMessageWithOpenAiAssistant.js";
 import { processQuestionWithApi } from "./processQuestionWithApi.js";
 import { saveQuestionInThread } from "./saveQuestionInThread.js";
@@ -24,7 +25,7 @@ export class MessageQueue {
 			// Take the first record and delete it from the queue
 			const newMessage = queue.messages.shift();
 			const newFile = queue.files.shift();
-			console.log("newfile--->", newFile)
+			console.log("newfile--->", newFile);
 
 			try {
 				if (newMessage.question) {
@@ -40,7 +41,7 @@ export class MessageQueue {
 
 					// Excecute callback for be able to respond the user (res object).
 					queue.responseCallback(null, response);
-										
+
 					// Pass the user non predefinded question to the GPT
 				} else {
 					const response = await processMessageWithOpenAiAssistant(
@@ -49,14 +50,15 @@ export class MessageQueue {
 						newFile.baseUrl
 					);
 					//console.log("response GPT:", response)
-					
+
 					// Excecute callback for be able to respond the user (res object)
 					queue.responseCallback(null, {
-							content: response?.messageGpt
-								? response.messageGpt
-								: response.errorMessage,
-							threadId: response.threadId,
-						});					
+						content: response?.messageGpt
+							? response.messageGpt
+							: response.errorMessage,
+						threadId: response.threadId,
+					});					
+				
 				}
 			} catch (error) {
 				console.error(`14. Error processing message: ${error.message}`);
@@ -84,7 +86,7 @@ export class MessageQueue {
 				messages: [],
 				files: [],
 				processing: false,
-				responseCallback: null,				 
+				responseCallback: null,
 			});
 		}
 

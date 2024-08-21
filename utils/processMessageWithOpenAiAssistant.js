@@ -6,6 +6,8 @@ import { saveUserMessageInDb } from "./saveUserMessageInDb.js";
 import { saveGPTResponseInDb } from "./saveGPTResponseInDb.js";
 import { initialGreeting } from "./initialGreeting.js";
 import audioToText from "../utils/audioToText.js";
+import { newErrorWhatsAppNotification } from "./newErrorWhatsAppNotification.js";
+import { errorMessage1, errorMessage2 } from "./errorMessages.js";
 
 dotenv.config();
 
@@ -62,7 +64,7 @@ export const processMessageWithOpenAiAssistant = async (
 		const audioTranscription = await audioToText(files[0]);
 		console.log("Audio trascription:", audioTranscription);
 		content = audioTranscription;
-		newMessage.content = audioTranscription		
+		newMessage.content = audioTranscription;
 	} else if (files.length > 0) {
 		console.log("File sent with an unknown format!!!");
 	}
@@ -97,14 +99,14 @@ export const processMessageWithOpenAiAssistant = async (
 						type: "image_url",
 						image_url: {
 							url: imageUrl,
-							detail: "high"
+							detail: "high",
 						},
 					},
 				],
 			});
 		} else {
 			// Pass in the user question into the existing thread
-			console.log("Content-->", content)
+			console.log("Content-->", content);
 			await openai.beta.threads.messages.create(threadId, {
 				role: newMessage.role,
 				content: content,
@@ -132,7 +134,7 @@ export const processMessageWithOpenAiAssistant = async (
 							type: "image_url",
 							image_url: {
 								url: imageUrl,
-								detail: "high"
+								detail: "high",
 							},
 						},
 					],
@@ -197,27 +199,34 @@ export const processMessageWithOpenAiAssistant = async (
 			while (runStatus.status !== "completed") {
 				await new Promise((resolve) => setTimeout(resolve, 3000));
 				runStatus = await openai.beta.threads.runs.retrieve(threadId, run.id);
-				
-				let errorMessage
+
+				let errorMessage;
 				if (runStatus.status === "failed") {
 					currentAttempt++;
 					const runMessages = await openai.beta.threads.messages.list(threadId);
-					if (runMessages.body.data[0].assistant_id===null || runStatus.last_error !==null){
-						errorMessage = "Hay un problema en el servidor donde tengo la información de Gus-Tech; por lo que voy a comenzar una nueva conversación. ¿Por favor, me repetirías tu pregunta?"
+					if (
+						runMessages.body.data[0].assistant_id === null ||
+						runStatus.last_error !== null
+					) {
+						errorMessage = errorMessage2;
 					} else {
-						errorMessage =
-							"Te pido disculpas 🙏, en este momento no puedo procesar tu solicitud ☹️. Por favor intentá mas tarde. ¡Saludos de MegaBot! 🙂";
+						errorMessage = errorMessage1;
 					}
 				}
-				
+
 				console.log("run status---->", runStatus.status);
 				console.log("run last_error---->", runStatus.last_error);
 				console.log("Attempts with status = failed:", currentAttempt);
 				const messages2 = await openai.beta.threads.messages.list(threadId);
-				console.log("Assistant Id-------->",messages2.body.data[0].assistant_id)
-				console.log("Message------------->",messages2.body.data[0].content[0].text)
+				console.log(
+					"Assistant Id-------->",
+					messages2.body.data[0].assistant_id
+				);
+				console.log(
+					"Message------------->",
+					messages2.body.data[0].content[0].text
+				);
 				if (currentAttempt > maxAttempts) {
-
 					// Exit the loop if maximum attempts are exceeded and send an error message to the user
 					return { errorMessage, threadId };
 				}
@@ -233,9 +242,12 @@ export const processMessageWithOpenAiAssistant = async (
 			currentAttempt++;
 			if (currentAttempt >= maxAttempts || error) {
 				console.error("7. Exceeded maximum attempts. Exiting the loop.");
-				const errorMessage =
-					"Te pido disculpas 🙏, en este momento no puedo procesar tu solicitud ☹️. Por favor intentá mas tarde. ¡Saludos de MegaBot! 🙂";
-
+				
+				// Notify error to Admin by WhatsApp
+				newErrorWhatsAppNotification("www.gus-tech.com", error.message);
+				
+				const errorMessage = errorMessage1;
+				
 				// Exit the loop if maximum attempts are exceeded and send an error message to the user
 				return { errorMessage, threadId };
 			}

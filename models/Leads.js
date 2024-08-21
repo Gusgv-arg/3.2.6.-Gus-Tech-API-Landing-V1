@@ -7,7 +7,7 @@ const leadsSchema = new mongoose.Schema(
 		channel: { type: String, required: true },	
 		content: { type: String, required: true },
 		thread_id: {type: String},
-		botSwitch: { type: String, enum: ['ON', 'OFF'], required: true },				
+		botSwitch: { type: String, enum: ['ON', 'OFF'], required: true },					
 	},
 	{
 		timestamps: true,

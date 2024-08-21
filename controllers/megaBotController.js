@@ -6,6 +6,7 @@ import { saveQuestionInThread } from "../utils/saveQuestionInThread.js";
 import { saveUserQuestionInDb } from "../utils/saveUserQuestionInDb.js";
 import dotenv from "dotenv";
 import textToAudio from "../utils/textToAudio.js";
+import { newErrorWhatsAppNotification } from "../utils/newErrorWhatsAppNotification.js";
 
 dotenv.config();
 
@@ -37,6 +38,10 @@ export const megaBotController = async (req, res) => {
 		async (error, response) => {
 			if (error) {
 				console.log("An error occurred:", error.message);
+				
+				// Notify error to Admin by WhatsApp
+				newErrorWhatsAppNotification("www.gus-tech.com", error.message)
+				
 				return res.status(500).send({
 					role: "assistant",
 					content:
